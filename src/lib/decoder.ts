@@ -1,3 +1,5 @@
+import {DecoderValue} from "./utils";
+
 export type DecoderFn<T> = (value: unknown) => T;
 
 // declare const Tags: unique symbol;
@@ -10,8 +12,6 @@ class BaseError {
 BaseError.prototype = new Error();
 
 export class DecodeError extends BaseError {}
-
-export type Infer<TDecoder extends Decoder<any>> = ReturnType<TDecoder["decode"]>;
 
 export class DecodeErrorWithPath extends DecodeError {
   public path: (string|number)[];
@@ -56,7 +56,7 @@ export class Decoder<A> {
   }
 
   public andThen<TDecoderB extends Decoder<any>>(f: (v: A) => TDecoderB) {
-    return new Decoder<Infer<TDecoderB>>(
+    return new Decoder<DecoderValue<TDecoderB>>(
       (value: unknown) => {
         const decodedValue = this.fn(value);
         return f(decodedValue).fn(value);

@@ -1,12 +1,12 @@
-import { number, object, string, union, nullValue, at, arrayOf, optional} from "./index";
-import { Infer } from "./decoder";
+import { number, object, string, union, nullValue, at, arrayOf, optional} from "../src/lib";
+import { DecoderValue } from "../src/lib/utils";
 const songName = at('name', string);
 const hobby = object({
   name: string,
   icon: string.refine(s => s.length <= 1)
 });
 
-type Person = Infer<typeof person>;
+type Person = DecoderValue<typeof person>;
 
 const person = object({
   name: optional(string).withDefault("Anonymous"),
