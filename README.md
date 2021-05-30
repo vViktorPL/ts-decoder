@@ -36,4 +36,4 @@ There are some existing "decoder" libraries but IMHO they have some drawbacks (w
 * [superstruct](https://github.com/ianstormtaylor/superstruct) - pretty similar library to this one, but IMHO coercing type-inference has room for improvement
 * [type-safe-json-decoder](https://github.com/ooesili/type-safe-json-decoder) - nicely imitates [Elm](https://elm-lang.org) decoders but for instance using `map` or `andThen` on them in JS/TS syntax isn't so readable as it is in Elm which has support for pipe operator (`|>`)
 
-But this is just an opinion! These two are great projects that you may consider depending on your preferences :)
+But this is just an opinion! These three are great projects that you may consider depending on your preferences :)

@@ -1,5 +1,6 @@
 import { number, object, string, union, nullValue, at, arrayOf, optional} from "../src/lib";
 import {DecoderValidInput, DecoderValue} from "../src/lib/utils";
+import {enumValue} from "../src/lib/enum";
 const songName = at('name', string);
 const hobby = object({
   name: string,
@@ -17,7 +18,7 @@ const person = object({
 });
 
 const p = person
-  .decode({ "name": "John", "age": 1, "favoriteSong": "x", "hobbies": [{"name": 1, "icon": "A"}]});
+  .decode({ "name": "John", "age": 1, "favoriteSong": "x", "hobbies": [{"name": "", "icon": "A"}]});
 
 const versionedApi = at('version', number.refine((v): v is keyof typeof apiDecoders => v in apiDecoders)).andThen(
   version => apiDecoders[version]
@@ -36,3 +37,24 @@ const apiDecoders = {
   1: v1Decoder,
   2: v2Decoder,
 };
+
+
+enum TestEnum {
+  "Value0",
+  "01" = "1",
+  "" = 15,
+  A,
+  X,
+}
+
+const enumDecoder = enumValue<TestEnum>(TestEnum);
+
+// OK
+enumDecoder.decode(0);
+enumDecoder.decode("1");
+enumDecoder.decode(15);
+enumDecoder.decode(16);
+enumDecoder.decode(17);
+
+// Not OK:
+enumDecoder.decode("");
