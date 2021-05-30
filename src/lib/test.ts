@@ -1,9 +1,12 @@
-import {Decoder, number, object, string, union, nullValue, at, arrayOf, optional} from "./index";
+import { number, object, string, union, nullValue, at, arrayOf, optional} from "./index";
+import { Infer } from "./decoder";
 const songName = at('name', string);
 const hobby = object({
   name: string,
   icon: string.refine(s => s.length <= 1)
 });
+
+type Person = Infer<typeof person>;
 
 const person = object({
   name: optional(string).withDefault("Anonymous"),
@@ -14,3 +17,21 @@ const person = object({
 
 person
   .decode({ "name": "John", "age": 1, "favoriteSong": "x", "hobbies": [{"name": 1, "icon": "A"}]});
+
+const versionedApi = at('version', number.refine((v): v is keyof typeof apiDecoders => v in apiDecoders)).andThen(
+  version => apiDecoders[version]
+)
+
+const v1Decoder = object({
+  name: string,
+});
+
+const v2Decoder = object({
+  firstName: string,
+  lastName: string,
+});
+
+const apiDecoders = {
+  1: v1Decoder,
+  2: v2Decoder,
+};
