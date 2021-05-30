@@ -1,11 +1,12 @@
 import { number, object, string, union, nullValue, at, arrayOf, optional} from "../src/lib";
-import { DecoderValue } from "../src/lib/utils";
+import {DecoderValidInput, DecoderValue} from "../src/lib/utils";
 const songName = at('name', string);
 const hobby = object({
   name: string,
   icon: string.refine(s => s.length <= 1)
 });
 
+type PersonInput = DecoderValidInput<typeof person>;
 type Person = DecoderValue<typeof person>;
 
 const person = object({
@@ -15,7 +16,7 @@ const person = object({
   hobbies: optional(arrayOf(hobby)).withDefault([]),
 });
 
-person
+const p = person
   .decode({ "name": "John", "age": 1, "favoriteSong": "x", "hobbies": [{"name": 1, "icon": "A"}]});
 
 const versionedApi = at('version', number.refine((v): v is keyof typeof apiDecoders => v in apiDecoders)).andThen(

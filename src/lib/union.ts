@@ -1,10 +1,14 @@
 import { DecodeError, Decoder } from './decoder';
+import {DecoderValidInput, DecoderValue} from "./utils";
 
-export const union = <T extends [Decoder<any>, ...Array<Decoder<any>>]>(...decoders: T) => new Decoder(
+export const union = <T extends [Decoder<any, any>, ...Array<Decoder<any, any>>]>(...decoders: T) => new Decoder<
+  DecoderValidInput<T[number]>,
+  DecoderValue<T[number]>
+>(
   value => {
     for (const i in decoders) {
       try {
-        return decoders[i].decode(value) as T extends Array<Decoder<infer D>>? D : never
+        return decoders[i].decode(value)
       } catch (e) {}
     }
 

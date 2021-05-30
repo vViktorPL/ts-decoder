@@ -1,7 +1,10 @@
 import { DecodeError, DecodeErrorWithPath, Decoder } from './decoder';
-import {NonEmptyArray, pathToString} from "./utils";
+import {DecoderValidInput, DecoderValue, NonEmptyArray, pathToString} from "./utils";
 
-export const arrayOf = <T>(entryDecoder: Decoder<T>) => new Decoder(
+export const arrayOf = <TDecoder extends Decoder<any, any>>(entryDecoder: TDecoder) => new Decoder<
+  DecoderValidInput<TDecoder>[],
+  DecoderValue<TDecoder>[]
+>(
   value => {
     if (!Array.isArray(value)) {
       throw new DecodeError('Value is not an array');
@@ -35,7 +38,5 @@ export const arrayOf = <T>(entryDecoder: Decoder<T>) => new Decoder(
 
 const isNonEmptyArray = <T>(a: T[]): a is NonEmptyArray<T> => a.length > 0;
 
-export const nonEmptyArrayOf = <T>(entryDecoder: Decoder<T>) =>
-  arrayOf<T>(entryDecoder).refine(isNonEmptyArray);
-
-// export const tuple()
+export const nonEmptyArrayOf = <TDecoder extends Decoder<any, any>>(entryDecoder: TDecoder) =>
+  arrayOf(entryDecoder).refine(isNonEmptyArray);

@@ -1,7 +1,7 @@
 import {DecodeError, Decoder} from "./decoder";
 import {union} from "./union";
 
-export const nullValue = new Decoder(
+export const nullValue = new Decoder<null, null>(
   value => {
     if (value !== null) {
       throw new DecodeError(`Expected null but got: ${typeof value}`);
@@ -11,5 +11,5 @@ export const nullValue = new Decoder(
   }
 );
 
-export const nullable = <T>(decoder: Decoder<T>) =>
+export const nullable = <TDecoder extends Decoder<any, any>>(decoder: TDecoder) =>
   union(decoder, nullValue);

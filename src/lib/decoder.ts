@@ -1,4 +1,4 @@
-import {DecoderValue} from "./utils";
+import {DecoderValidInput, DecoderValue} from "./utils";
 
 export type DecoderFn<T> = (value: unknown) => T;
 
@@ -30,20 +30,20 @@ export class DecodeErrorWithPath extends DecodeError {
 //   }
 // }
 
-export class Decoder<A> {
-  protected fn: DecoderFn<A>;
+export class Decoder<TValidInput, TOutput> {
+  protected fn: DecoderFn<TOutput>;
 
-  constructor(fn: DecoderFn<A>) {
+  constructor(fn: DecoderFn<TOutput>) {
     this.fn = fn;
   }
 
-  public map<B>(f: (a: A) => B): Decoder<B> {
+  public map<TNewOutput>(f: (a: TOutput) => TNewOutput): Decoder<TValidInput, TNewOutput> {
     return new Decoder(
       (value: unknown) => f(this.fn(value))
     );
   }
 
-  public mapError(f: (error: DecodeError) => DecodeError): Decoder<A> {
+  public mapError(f: (error: DecodeError) => DecodeError): Decoder<TValidInput, TOutput> {
     return new Decoder(
       (value: unknown) => {
         try {
@@ -55,8 +55,8 @@ export class Decoder<A> {
     )
   }
 
-  public andThen<TDecoderB extends Decoder<any>>(f: (v: A) => TDecoderB) {
-    return new Decoder<DecoderValue<TDecoderB>>(
+  public andThen<TNewDecoder extends Decoder<any, any>>(f: (v: TOutput) => TNewDecoder) {
+    return new Decoder<TValidInput & DecoderValidInput<TNewDecoder>, DecoderValue<TNewDecoder>>(
       (value: unknown) => {
         const decodedValue = this.fn(value);
         return f(decodedValue).fn(value);
@@ -64,10 +64,10 @@ export class Decoder<A> {
     )
   }
 
-  public refine<T extends A>(f: (v: A) => v is T): Decoder<T>;
-  public refine(f: (v: A) => boolean): Decoder<A>;
-  public refine<T extends A>(f: (v: A) => v is T): Decoder<T> {
-    return new Decoder<T>(
+  public refine<T extends TOutput>(f: (v: TOutput) => v is T): Decoder<TValidInput, T>;
+  public refine(f: (v: TOutput) => boolean): Decoder<TValidInput, TOutput>;
+  public refine<T extends TOutput>(f: (v: TOutput) => v is T): Decoder<TValidInput, T> {
+    return new Decoder<TValidInput, T>(
       (value: unknown) => {
         const decodedValue = this.fn(value);
 
@@ -80,11 +80,11 @@ export class Decoder<A> {
     )
   }
 
-  public decode(value: unknown): A {
-    return this.fn(value);
+  public decode<TValue>(value: TValue) {
+    return this.fn(value) as unknown extends TValue ? TOutput : TValue extends TValidInput ? TOutput : never;
   }
 
-  public decodeJSON(json: string): A {
+  public decodeJSON(json: string): TOutput {
     return this.decode(JSON.parse(json));
   }
 

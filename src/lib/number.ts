@@ -1,6 +1,6 @@
 import { DecodeError, Decoder } from './decoder';
 
-export const number = new Decoder(
+export const number = new Decoder<number, number>(
   value => {
     if (typeof value !== 'number') {
       throw new DecodeError(`Expected number but got ${typeof value}`);
@@ -10,7 +10,7 @@ export const number = new Decoder(
   }
 );
 
-export const numberLiteral = <T extends number>(literalValue: T) => new Decoder(
+export const numberLiteral = <T extends number>(literalValue: T) => new Decoder<T, T>(
   value => {
     if (value !== literalValue) {
       throw new DecodeError(`Expected number literal: "${literalValue}", got "${value}"`);

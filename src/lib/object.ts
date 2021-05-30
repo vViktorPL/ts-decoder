@@ -1,7 +1,7 @@
 import {DecodeError, DecodeErrorWithPath, Decoder} from "./decoder";
-import {DecoderValue, pathToString} from "./utils";
+import {DecoderValidInput, DecoderValue, pathToString} from "./utils";
 
-export type ObjectSchema = { [key: string]: Decoder<any> };
+export type ObjectSchema = { [key: string]: Decoder<any, any> };
 
 export type ObjectDecoderOptions = Partial<{
   extraKeys: boolean;
@@ -21,7 +21,10 @@ export const object = <T extends ObjectSchema>(
     aggregateErrors = false,
   }: ObjectDecoderOptions = {}
 ) => {
-  return new Decoder(value => {
+  return new Decoder<
+    { [key in keyof T]: DecoderValidInput<T[key]> },
+    { [key in keyof T]: DecoderValue<T[key]> }
+  >(value => {
     if (typeof value !== 'object') {
       throw new DecodeError(`Expected object, got "${typeof value}"`)
     } else if (value === null) {
@@ -76,20 +79,20 @@ export const object = <T extends ObjectSchema>(
       throw new AggregatedDecodeError('One or more object key values are invalid', errors);
     }
 
-    return result as { [key in keyof T]: DecoderValue<T[key]> };
+    return result as any;
   })
 };
 
-export class OptionalDecoder<T> extends Decoder<T|undefined> {
+export class OptionalDecoder<TValidInput, TOutput> extends Decoder<TValidInput|undefined, TOutput|undefined> {
   withDefault<Default>(defaultValue: Default) {
     return this.map(
       value => value === undefined
-        ? defaultValue as Default extends T ? T : Default
-        : (value as Exclude<T, undefined>)
+        ? defaultValue as Default extends TOutput ? TOutput : Default
+        : (value as Exclude<TOutput, undefined>)
     );
   }
 }
 
-export const optional = <T>(decoder: Decoder<T>) => new OptionalDecoder(
+export const optional = <TDecoder extends Decoder<any, any>>(decoder: TDecoder) => new OptionalDecoder<DecoderValidInput<TDecoder>, DecoderValue<TDecoder>>(
   value => value === undefined ? undefined : decoder.decode(value)
 );
