@@ -7,3 +7,4 @@ export { at } from './at'
 export { arrayOf, nonEmptyArrayOf } from './array';
 export { union } from './union';
 export { nullValue } from './null';
+export { unknown } from './unknown';
