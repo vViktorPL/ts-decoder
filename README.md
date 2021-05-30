@@ -1,4 +1,4 @@
-# ts-decoder
+# Smartly-typed Decoder
 
 ## Motivation
 
@@ -22,9 +22,9 @@ is the extra thing that decoders can be good at.
 
 
 ```typescript
-import { Decoder } from 'ts-decoder';
+import { Decoder } from 'smartly-typed-decoder';
 
-
+// TO BE DONE
 
 ```
 
@@ -32,7 +32,8 @@ import { Decoder } from 'ts-decoder';
 
 There are some existing "decoder" libraries but IMHO they have some drawbacks (which inspired me to write this library by the way):
 
-* [io-ts](https://github.com/gcanti/io-ts) - looks overwhelming, for instance encoders may be not needed as they can be just plain functions that don't need any library at all
+* [io-ts](https://github.com/gcanti/io-ts) - nice library but wrapping errors with `Either` may be not so intuitive for devs that are not functional programming fans
+* [superstruct](https://github.com/ianstormtaylor/superstruct) - pretty similar library to this one, but IMHO coercing type-inference has room for improvement
 * [type-safe-json-decoder](https://github.com/ooesili/type-safe-json-decoder) - nicely imitates [Elm](https://elm-lang.org) decoders but for instance using `map` or `andThen` on them in JS/TS syntax isn't so readable as it is in Elm which has support for pipe operator (`|>`)
 
 But this is just an opinion! These two are great projects that you may consider depending on your preferences :)
