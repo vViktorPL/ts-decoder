@@ -1,0 +1,34 @@
+{
+  "name": "ts-decoder",
+  "version": "0.0.1",
+  "description": "Composable JSON parsing library with nice TypeScript support",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vViktorPL/ts-decoder.git"
+  },
+  "keywords": [
+    "validation",
+    "parse",
+    "typescript",
+    "decoder"
+  ],
+  "author": "Wiktor Toporek <wtoporek@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vViktorPL/ts-decoder/issues"
+  },
+  "homepage": "https://github.com/vViktorPL/ts-decoder#readme"
+}
