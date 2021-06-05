@@ -1,7 +1,8 @@
-import {DecodeError, DecodeErrorWithPath, Decoder} from "./decoder";
+import {Decoder} from "./decoder";
 import {DecoderValidInput, DecoderValue, pathToString} from "./utils";
+import {DecodeError, DecodeErrorWithPath} from "./error";
 
-export type ObjectSchema = { [key: string]: Decoder<any, any> };
+export type ObjectSchema = Record<string, Decoder>;
 
 export type ObjectDecoderOptions = Partial<{
   extraKeys: boolean;
@@ -82,6 +83,25 @@ export const object = <T extends ObjectSchema>(
     return result as any;
   })
 };
+
+type UnionToIntersection<T> =
+  (T extends any ? (x: T) => any : never) extends
+    (x: infer R) => any ? R : never
+
+export const combine = <T extends ObjectSchema>(schema: T) => new Decoder<
+  UnionToIntersection<DecoderValidInput<T[keyof T]>>,
+  { [Key in keyof T]: DecoderValue<T[Key]> }
+>(
+  value => {
+    const result: any = {};
+
+    for (let key in schema) {
+      result[key] = schema[key].decode(value);
+    }
+
+    return result;
+  }
+);
 
 export class OptionalDecoder<TValidInput, TOutput> extends Decoder<TValidInput|undefined, TOutput|undefined> {
   withDefault<Default>(defaultValue: Default) {

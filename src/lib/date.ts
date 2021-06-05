@@ -1,6 +1,7 @@
-import {DecodeError, Decoder} from "./decoder";
+import {Decoder} from "./decoder";
 import {string} from "./string";
 import {number} from "./number";
+import {DecodeError} from "./error";
 
 export const dateFromString = string.map(
   value => {

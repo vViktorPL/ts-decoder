@@ -19,13 +19,52 @@ is the extra thing that decoders can be good at.
 
 ## Examples
 
-
+### Signup form
 
 ```typescript
-import { Decoder } from 'smartly-typed-decoder';
+import { Decoder, object, oneOf, string, stringLiteral, boolean, optional, nullValue } from 'smartly-typed-decoder';
 
-// TO BE DONE
+const signupFormDecoder = object({
+  firstName: string,
+  lastName: string,
+  gender: oneOf(stringLiteral("male"), stringLiteral("female"), stringLiteral("other")),
+  newsletter: optional(boolean).withDefault(false),
+  extraNotes: optional(string).withDefault(""),
+});
 
+signupFormDecoder.decode({
+  firstName: "John",
+  lastName: "Doe",
+  gender: "male",
+}); // === { firstName: "John", lastName: "Doe", gender: "male", newsletter: false, extraNotes: "" }
+
+signupFormDecoder.decode({
+  firstName: "John",
+}); // Error
+```
+
+### Pagination
+
+```typescript
+import { object, string, optional } from '../src/lib/index';
+
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+
+const natFromString = string
+  .refine(value => /^\d+$/.test(value))
+  .map(parseInt);
+
+const pageNumberDecoder = optional(natFromString)
+  .map(value => (value || 1) - 1);
+const pageSizeDecoder = optional(natFromString)
+  .withDefault(DEFAULT_PAGE_SIZE)
+  .refine(value => value > 0 && value <= MAX_PAGE_SIZE)
+
+const paginationFromQueryStringDecoder = combine({
+  page: at("p", pageNumberDecoder),
+  pageSize: at("s", pageSizeDecoder),
+}, { extraKeys: true })
 ```
 
 ## Alternatives

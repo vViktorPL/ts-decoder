@@ -1,5 +1,6 @@
-import {DecodeError, Decoder} from "./decoder";
+import {Decoder} from "./decoder";
 import {union} from "./union";
+import {DecodeError} from "./error";
 
 export const nullValue = new Decoder<null, null>(
   value => {

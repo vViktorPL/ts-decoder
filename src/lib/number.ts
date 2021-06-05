@@ -1,4 +1,5 @@
-import { DecodeError, Decoder } from './decoder';
+import { Decoder } from './decoder';
+import {DecodeError} from "./error";
 
 export const number = new Decoder<number, number>(
   value => {

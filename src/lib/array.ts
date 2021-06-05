@@ -1,5 +1,6 @@
-import { DecodeError, DecodeErrorWithPath, Decoder } from './decoder';
+import { Decoder } from './decoder';
 import {DecoderValidInput, DecoderValue, NonEmptyArray, pathToString} from "./utils";
+import {DecodeError, DecodeErrorWithPath} from "./error";
 
 export const arrayOf = <TDecoder extends Decoder<any, any>>(entryDecoder: TDecoder) => new Decoder<
   DecoderValidInput<TDecoder>[],
@@ -38,5 +39,5 @@ export const arrayOf = <TDecoder extends Decoder<any, any>>(entryDecoder: TDecod
 
 const isNonEmptyArray = <T>(a: T[]): a is NonEmptyArray<T> => a.length > 0;
 
-export const nonEmptyArrayOf = <TDecoder extends Decoder<any, any>>(entryDecoder: TDecoder) =>
+export const nonEmptyArrayOf = <TDecoder extends Decoder>(entryDecoder: TDecoder) =>
   arrayOf(entryDecoder).refine(isNonEmptyArray);

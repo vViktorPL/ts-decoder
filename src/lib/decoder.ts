@@ -1,28 +1,11 @@
 import {DecoderValidInput, DecoderValue} from "./utils";
+import {DecodeError} from "./error";
 
 export type DecoderFn<T> = (value: unknown) => T;
 
 // declare const Tags: unique symbol;
 
-class BaseError {
-  constructor (public message: string) {
-    Error.call(this, message);
-  }
-}
-BaseError.prototype = new Error();
 
-export class DecodeError extends BaseError {}
-
-export class DecodeErrorWithPath extends DecodeError {
-  public path: (string|number)[];
-  public leafError: DecodeError;
-
-  constructor(message: string, path: (string|number)[], leafError: DecodeError) {
-    super(message);
-    this.path = path;
-    this.leafError = leafError;
-  }
-}
 
 // export type Tagged<Tag extends string, Type> = Type & {
 //   [Tags]: {
@@ -30,8 +13,8 @@ export class DecodeErrorWithPath extends DecodeError {
 //   }
 // }
 
-export class Decoder<TValidInput, TOutput> {
-  protected fn: DecoderFn<TOutput>;
+export class Decoder<TValidInput = unknown, TOutput = unknown> {
+  private readonly fn: DecoderFn<TOutput>;
 
   constructor(fn: DecoderFn<TOutput>) {
     this.fn = fn;
@@ -59,7 +42,7 @@ export class Decoder<TValidInput, TOutput> {
     return new Decoder<TValidInput & DecoderValidInput<TNewDecoder>, DecoderValue<TNewDecoder>>(
       (value: unknown) => {
         const decodedValue = this.fn(value);
-        return f(decodedValue).fn(value);
+        return f(decodedValue).decode(value);
       }
     )
   }

@@ -1,5 +1,6 @@
-import { DecodeError, Decoder } from './decoder';
+import { Decoder } from './decoder';
 import {DecoderValidInput, DecoderValue} from "./utils";
+import {DecodeError} from "./error";
 
 export const union = <T extends [Decoder<any, any>, ...Array<Decoder<any, any>>]>(...decoders: T) => new Decoder<
   DecoderValidInput<T[number]>,
