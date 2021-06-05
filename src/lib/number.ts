@@ -1,10 +1,10 @@
 import { Decoder } from './decoder';
-import {DecodeError} from "./error";
+import {DecodeError, DecodeTypeError} from "./error";
 
 export const number = new Decoder<number, number>(
   value => {
     if (typeof value !== 'number') {
-      throw new DecodeError(`Expected number but got ${typeof value}`);
+      throw new DecodeTypeError(`Expected number but got ${typeof value}`);
     }
 
     return value;

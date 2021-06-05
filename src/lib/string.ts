@@ -1,10 +1,10 @@
 import { Decoder } from './decoder';
-import {DecodeError} from "./error";
+import { DecodeError, DecodeTypeError } from "./error";
 
 export const string = new Decoder<string, string>(
   value => {
     if (typeof value !== 'string') {
-      throw new DecodeError(`Expected string but got ${typeof value}`);
+      throw new DecodeTypeError(`Expected string but got ${typeof value}`);
     }
 
     return value;

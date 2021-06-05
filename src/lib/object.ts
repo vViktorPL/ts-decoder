@@ -1,6 +1,6 @@
 import {Decoder} from "./decoder";
 import {DecoderValidInput, DecoderValue, pathToString} from "./utils";
-import {DecodeError, DecodeErrorWithPath} from "./error";
+import {DecodeError, DecodeErrorWithPath, DecodeTypeError} from "./error";
 
 export type ObjectSchema = Record<string, Decoder>;
 
@@ -27,9 +27,9 @@ export const object = <T extends ObjectSchema>(
     { [key in keyof T]: DecoderValue<T[key]> }
   >(value => {
     if (typeof value !== 'object') {
-      throw new DecodeError(`Expected object, got "${typeof value}"`)
+      throw new DecodeTypeError(`Expected object, got "${typeof value}"`)
     } else if (value === null) {
-      throw new DecodeError('Expected object, got "null"');
+      throw new DecodeTypeError('Expected object, got "null"');
     } else if (!extraKeys && Object.keys(value).length > Object.keys(schema).length) {
       const extraKeysList = Object.keys(value)
         .filter(key => !(key in schema))

@@ -1,11 +1,11 @@
 import {Decoder} from "./decoder";
 import {union} from "./union";
-import {DecodeError} from "./error";
+import {DecodeTypeError} from "./error";
 
 export const nullValue = new Decoder<null, null>(
   value => {
     if (value !== null) {
-      throw new DecodeError(`Expected null but got: ${typeof value}`);
+      throw new DecodeTypeError(`Expected null but got: ${typeof value}`);
     }
 
     return null as null;

@@ -7,6 +7,8 @@ BaseError.prototype = new Error();
 
 export class DecodeError extends BaseError {}
 
+export class DecodeTypeError extends BaseError {}
+
 export class DecodeErrorWithPath extends DecodeError {
   public path: (string|number)[];
   public leafError: DecodeError;

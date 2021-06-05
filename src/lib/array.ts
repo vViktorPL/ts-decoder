@@ -1,6 +1,6 @@
 import { Decoder } from './decoder';
 import {DecoderValidInput, DecoderValue, NonEmptyArray, pathToString} from "./utils";
-import {DecodeError, DecodeErrorWithPath} from "./error";
+import {DecodeError, DecodeErrorWithPath, DecodeTypeError} from "./error";
 
 export const arrayOf = <TDecoder extends Decoder<any, any>>(entryDecoder: TDecoder) => new Decoder<
   DecoderValidInput<TDecoder>[],
@@ -8,7 +8,7 @@ export const arrayOf = <TDecoder extends Decoder<any, any>>(entryDecoder: TDecod
 >(
   value => {
     if (!Array.isArray(value)) {
-      throw new DecodeError('Value is not an array');
+      throw new DecodeTypeError('Value is not an array');
     }
 
     return value.map(
