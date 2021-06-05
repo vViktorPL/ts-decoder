@@ -46,7 +46,7 @@ signupFormDecoder.decode({
 ### Pagination
 
 ```typescript
-import { object, string, optional } from '../src/lib/index';
+import { object, string, optional } from 'smartly-typed-decoder';
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
