@@ -1,5 +1,5 @@
 import {DecoderValidInput, DecoderValue} from "./utils";
-import {DecodeError} from "./error";
+import {DecodeError, DecodeRefinementError} from "./error";
 
 export type DecoderFn<T> = (value: unknown) => T;
 
@@ -47,15 +47,25 @@ export class Decoder<TValidInput = unknown, TOutput = unknown> {
     )
   }
 
-  public refine<T extends TOutput>(f: (v: TOutput) => v is T): Decoder<TValidInput, T>;
-  public refine(f: (v: TOutput) => boolean): Decoder<TValidInput, TOutput>;
-  public refine<T extends TOutput>(f: (v: TOutput) => v is T): Decoder<TValidInput, T> {
+  public refine<T extends TOutput>(f: (v: TOutput) => v is T, refinementName?: string): Decoder<TValidInput, T>;
+  public refine(f: (v: TOutput) => boolean, refinementName?: string): Decoder<TValidInput, TOutput>;
+  public refine<T extends TOutput>(f: (v: TOutput) => v is T, refinementName?: string): Decoder<TValidInput, T> {
+    const refinementNameResolved =
+      refinementName !== undefined ? refinementName :
+      (f as any).name !== "" ? (f as any).name :
+      undefined;
+
     return new Decoder<TValidInput, T>(
       (value: unknown) => {
         const decodedValue = this.fn(value);
 
         if (!f(decodedValue)) {
-          throw new DecodeError('Value does not satisfy predicate');
+          throw new DecodeRefinementError(
+            typeof refinementNameResolved === "string" ?
+              `Value does not satisfy "${refinementNameResolved}" refinement`:
+              "Value does not satisfy refinement",
+            refinementNameResolved
+          );
         }
 
         return value as T;

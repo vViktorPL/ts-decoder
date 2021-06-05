@@ -17,3 +17,9 @@ export class DecodeErrorWithPath extends DecodeError {
     this.leafError = leafError;
   }
 }
+
+export class DecodeRefinementError extends DecodeError {
+  constructor(message: string, public refinementName?: string) {
+    super(message);
+  }
+}
