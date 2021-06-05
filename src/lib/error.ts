@@ -1,13 +1,6 @@
-class BaseError {
-  constructor (public message: string) {
-    Error.call(this, message);
-  }
-}
-BaseError.prototype = new Error();
+export class DecodeError extends Error {}
 
-export class DecodeError extends BaseError {}
-
-export class DecodeTypeError extends BaseError {}
+export class DecodeTypeError extends Error {}
 
 export class DecodeErrorWithPath extends DecodeError {
   public path: (string|number)[];
